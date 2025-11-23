@@ -31,4 +31,5 @@ target_link_libraries(${BaseTargetName} PRIVATE
         shared_plugin_helpers
         juce_recommended_config_flags
         juce_recommended_lto_flags
-        juce_recommended_warning_flags)
+        juce_recommended_warning_flags
+        ea_data_structures)

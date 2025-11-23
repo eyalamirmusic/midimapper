@@ -21,20 +21,16 @@ static void logMIDI(const juce::MidiBuffer& midiMessages)
     }
 }
 
+
+
 void MidiFXProcessor::processBlock(juce::AudioBuffer<float>& /*buffer*/,
                                    juce::MidiBuffer& midiMessages)
 
 {
-    tempBuffer.clear();
+    auto transposedMidi = transposer.process(midiMessages, transpose->get());
 
-    for (auto m: midiMessages)
-    {
-        auto message = m.getMessage();
-        tempBuffer.addEvent(message, m.samplePosition);
-    }
-
-    logMIDI(tempBuffer);
-    replaceContentsWith(tempBuffer, midiMessages);
+    logMIDI(transposedMidi);
+    replaceContentsWith(transposedMidi, midiMessages);
 }
 
 juce::AudioProcessorEditor* MidiFXProcessor::createEditor()
