@@ -1,20 +1,17 @@
 #include "Mapper.h"
+#include "Helpers.h"
 
 namespace EA::MIDI
 {
 
-void Transposer::mapNotes(int source, HeldNotes& dest, int transpose)
+void Mapper::process(MidiBuffer& midiMessages, NoteMapper& mapper) noexcept
 {
-    if (transpose != 0)
-    {
-        dest.map(source, source);
-    }
-    auto transposedNote = source + transpose;
-    transposedNote = juce::jlimit(0, 127, transposedNote);
-    dest.map(source, transposedNote);
+    auto& processed = getProcessed(midiMessages, mapper);
+    replaceContentsWith(processed, midiMessages);
 }
 
-MidiBuffer& Transposer::process(const MidiBuffer& midiMessages, int transpose)
+MidiBuffer& Mapper::getProcessed(const MidiBuffer& midiMessages,
+                                 NoteMapper& noteMapper) noexcept
 {
     output.clear();
 
@@ -26,7 +23,7 @@ MidiBuffer& Transposer::process(const MidiBuffer& midiMessages, int transpose)
         {
             auto originalNote = message.getNoteNumber();
 
-            mapNotes(originalNote, heldNotes, transpose);
+            noteMapper.map(originalNote, heldNotes);
 
             for (auto& note: heldNotes.getHeldNotes(originalNote))
             {

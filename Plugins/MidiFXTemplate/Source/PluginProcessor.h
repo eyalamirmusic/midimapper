@@ -5,16 +5,25 @@
 
 class MidiFXProcessor : public PluginHelpers::ProcessorBase
 {
+    using ParamBool = juce::AudioParameterBool;
     using ParamInt = juce::AudioParameterInt;
 
 public:
-    MidiFXProcessor() { addParameter(transpose); }
+    MidiFXProcessor()
+    {
+        addParameter(transpose);
+        addParameter(harmonize);
+    }
 
+private:
     void processBlock(juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
 
     juce::AudioProcessorEditor* createEditor() override;
 
-private:
+    EA::MIDI::Mapper mapper;
     EA::MIDI::Transposer transposer;
+    EA::MIDI::HarmonizedTransposer harmonizedTransposer;
+
+    ParamBool* harmonize = new ParamBool({"Harmonize", 1}, "Harmonize", false);
     ParamInt* transpose = new ParamInt({"Transpose", 1}, "Transpose", -12, 12, 0);
 };

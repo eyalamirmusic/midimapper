@@ -4,10 +4,18 @@ void MidiFXProcessor::processBlock(juce::AudioBuffer<float>& /*buffer*/,
                                    juce::MidiBuffer& midiMessages)
 
 {
-    auto transposedMidi = transposer.process(midiMessages, transpose->get());
+    if (harmonize->get())
+    {
+        harmonizedTransposer.transpose = transpose->get();
+        mapper.process(midiMessages, harmonizedTransposer);
+    }
+    else
+    {
+        transposer.transpose = transpose->get();
+        mapper.process(midiMessages, transposer);
+    }
 
-    EA::MIDI::log(transposedMidi);
-    EA::MIDI::replaceContentsWith(transposedMidi, midiMessages);
+    EA::MIDI::log(midiMessages);
 }
 
 juce::AudioProcessorEditor* MidiFXProcessor::createEditor()
