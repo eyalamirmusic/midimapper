@@ -10,10 +10,31 @@ class MidiFXProcessor : public PluginHelpers::ProcessorBase
     using ParamChoice = juce::AudioParameterChoice;
 
 public:
-    MidiFXProcessor()
+    MidiFXProcessor();
+
+    void getStateInformation(juce::MemoryBlock& destData) override
     {
-        addParameter(transpose);
-        addParameter(mode);
+
+        auto params = PluginHelpers::saveParamsTree(*this);
+
+        auto pluginPreset = juce::ValueTree(getName());
+        pluginPreset.appendChild(params, nullptr);
+        //This a good place to add any non-parameters to your preset
+
+        copyXmlToBinary(*pluginPreset.createXml(), destData);
+    }
+
+    void setStateInformation(const void* data, int sizeInBytes) override
+    {
+        if (auto xml = getXmlFromBinary(data, sizeInBytes))
+        {
+            auto preset = juce::ValueTree::fromXml(*xml);
+            auto params = preset.getChildWithName("Params");
+
+            PluginHelpers::loadParamsTree(*this, params);
+
+            //Load your non-parameter data now
+        }
     }
 
 private:

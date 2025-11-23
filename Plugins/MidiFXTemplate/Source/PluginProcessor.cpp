@@ -1,5 +1,11 @@
 #include "PluginProcessor.h"
 
+MidiFXProcessor::MidiFXProcessor()
+{
+    addParameter(transpose);
+    addParameter(mode);
+}
+
 void MidiFXProcessor::processBlock(juce::AudioBuffer<float>& /*buffer*/,
                                    juce::MidiBuffer& midiMessages)
 
