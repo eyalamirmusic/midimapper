@@ -1,5 +1,26 @@
 #include "PluginProcessor.h"
 
+static void replaceContentsWith(const juce::MidiBuffer& source,
+                                juce::MidiBuffer& dest) noexcept
+{
+    dest.clear();
+
+    for (auto m: source)
+        dest.addEvent(m.getMessage(), m.samplePosition);
+}
+
+static void logMIDI(const juce::MidiBuffer& midiMessages)
+{
+    for (auto m: midiMessages)
+    {
+        auto message = m.getMessage();
+        auto samplePos = m.samplePosition;
+
+        std::cout << message.getDescription() << " SamplePos:" << juce::String(samplePos)
+                  << std::endl;
+    }
+}
+
 void MidiFXProcessor::processBlock(juce::AudioBuffer<float>& /*buffer*/,
                                    juce::MidiBuffer& midiMessages)
 
@@ -9,20 +30,11 @@ void MidiFXProcessor::processBlock(juce::AudioBuffer<float>& /*buffer*/,
     for (auto m: midiMessages)
     {
         auto message = m.getMessage();
-        auto samplePos = m.samplePosition;
-
-        //First, debug all incoming messages to console:
-        std::cout << "Incoming:" << message.getDescription()
-                  << " SamplePos:" << juce::String(samplePos) << std::endl;
-
-        //Then, transpose all notes to be note #60
-        if (message.isNoteOnOrOff())
-            message.setNoteNumber(60);
-
-        tempBuffer.addEvent(message, samplePos);
+        tempBuffer.addEvent(message, m.samplePosition);
     }
 
-    midiMessages.swapWith(tempBuffer);
+    logMIDI(tempBuffer);
+    replaceContentsWith(tempBuffer, midiMessages);
 }
 
 juce::AudioProcessorEditor* MidiFXProcessor::createEditor()
