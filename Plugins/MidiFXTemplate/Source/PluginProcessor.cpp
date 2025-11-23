@@ -4,23 +4,25 @@ void MidiFXProcessor::processBlock(juce::AudioBuffer<float>& /*buffer*/,
                                    juce::MidiBuffer& midiMessages)
 
 {
-    if (harmonize->get())
+    switch (mode->getIndex())
     {
-        harmonizedTransposer.transpose = transpose->get();
-        mapper.process(midiMessages, harmonizedTransposer);
+        case 0:
+            transposer.transpose = transpose->get();
+            mapper.process(midiMessages, transposer);
+            break;
+        case 1:
+            harmonizedTransposer.transpose = transpose->get();
+            mapper.process(midiMessages, harmonizedTransposer);
+            break;
+        case 2:
+            mapper.process(midiMessages, statefulTransposer);
+            break;
+        case 3:
+            mapper.process(midiMessages, random);
+            break;
+        default:
+            jassertfalse;
     }
-    else
-    {
-        transposer.transpose = transpose->get();
-        mapper.process(midiMessages, transposer);
-    }
-
-    EA::MIDI::log(midiMessages);
-}
-
-juce::AudioProcessorEditor* MidiFXProcessor::createEditor()
-{
-    return new juce::GenericAudioProcessorEditor(*this);
 }
 
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
