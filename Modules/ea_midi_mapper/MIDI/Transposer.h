@@ -13,9 +13,7 @@ inline int transposeNote(int note, int offset) noexcept
 struct Transposer : NoteMapper
 {
     void map(int source, HeldNotes& dest) noexcept override
-    {
-        dest.map(source, transposeNote(source, transpose));
-    }
+    { dest.map(source, transposeNote(source, transpose)); }
 
     int transpose = 0;
 };
@@ -76,4 +74,12 @@ struct RandomTransposer : NoteMapper
 
     juce::Random random;
 };
+
+struct FixedNoteTransposer : NoteMapper
+{
+    void map(int source, HeldNotes& dest) noexcept override { dest.map(source, noteNum); }
+
+    int noteNum = 80;
+};
+
 } // namespace EA::MIDI
