@@ -39,4 +39,27 @@ void loadParamsTree(const juce::AudioProcessor& processor, const juce::ValueTree
             param->setValueNotifyingHost(paramTree[getValueString()]);
     }
 }
+
+void savePluginParams(const juce::AudioProcessor& processor, juce::MemoryBlock& destData)
+{
+    auto params = saveParamsTree(processor);
+
+    auto pluginPreset = juce::ValueTree(processor.getName());
+    pluginPreset.appendChild(params, nullptr);
+
+    processor.copyXmlToBinary(*pluginPreset.createXml(), destData);
+}
+
+void loadPluginParams(const juce::AudioProcessor& processor,
+                      const void* data,
+                      int sizeInBytes)
+{
+    if (auto xml = processor.getXmlFromBinary(data, sizeInBytes))
+    {
+        auto preset = juce::ValueTree::fromXml(*xml);
+        auto params = preset.getChildWithName("Params");
+
+        loadParamsTree(processor, params);
+    }
+}
 } // namespace PluginHelpers

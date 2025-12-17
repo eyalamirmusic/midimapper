@@ -1,4 +1,5 @@
 #include "ProcessorBase.h"
+#include "Helpers.h"
 
 namespace PluginHelpers
 {
@@ -125,14 +126,16 @@ bool ProcessorBase::isBusesLayoutSupported(
 
     return true;
 }
+
 void ProcessorBase::getStateInformation(juce::MemoryBlock& destData)
 {
-    juce::ignoreUnused(destData);
+    savePluginParams(*this, destData);
 }
 
 void ProcessorBase::setStateInformation(const void* data, int sizeInBytes)
 {
-    juce::ignoreUnused(data, sizeInBytes);
+    loadPluginParams(*this, data, sizeInBytes);
 }
+
 
 } // namespace PluginHelpers

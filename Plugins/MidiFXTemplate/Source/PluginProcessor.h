@@ -3,7 +3,6 @@
 #include <shared_plugin_helpers/shared_plugin_helpers.h>
 #include <ea_midi_mapper/ea_midi_mapper.h>
 
-
 class MidiFXProcessor : public PluginHelpers::ProcessorBase
 {
     using ParamBool = juce::AudioParameterBool;
@@ -12,9 +11,6 @@ class MidiFXProcessor : public PluginHelpers::ProcessorBase
 
 public:
     MidiFXProcessor();
-
-    void getStateInformation(juce::MemoryBlock& destData) override;
-    void setStateInformation(const void* data, int sizeInBytes) override;
 
 private:
     void processBlock(juce::AudioBuffer<float>&, juce::MidiBuffer&) override;

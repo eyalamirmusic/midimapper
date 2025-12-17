@@ -7,27 +7,6 @@ MidiFXProcessor::MidiFXProcessor()
     addParameter(fixedNote);
 }
 
-void MidiFXProcessor::getStateInformation(juce::MemoryBlock& destData)
-{
-    auto params = PluginHelpers::saveParamsTree(*this);
-
-    auto pluginPreset = juce::ValueTree(getName());
-    pluginPreset.appendChild(params, nullptr);
-
-    copyXmlToBinary(*pluginPreset.createXml(), destData);
-}
-
-void MidiFXProcessor::setStateInformation(const void* data, int sizeInBytes)
-{
-    if (auto xml = getXmlFromBinary(data, sizeInBytes))
-    {
-        auto preset = juce::ValueTree::fromXml(*xml);
-        auto params = preset.getChildWithName("Params");
-
-        PluginHelpers::loadParamsTree(*this, params);
-    }
-}
-
 void MidiFXProcessor::processBlock(juce::AudioBuffer<float>& /*buffer*/,
                                    juce::MidiBuffer& midiMessages)
 
