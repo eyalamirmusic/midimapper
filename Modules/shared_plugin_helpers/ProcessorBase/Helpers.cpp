@@ -40,11 +40,16 @@ void loadParamsTree(const juce::AudioProcessor& processor, const juce::ValueTree
     }
 }
 
+juce::String getFixedPluginName(const juce::AudioProcessor& processor)
+{
+    return processor.getName().replaceCharacters(" ", "_");
+}
+
 void savePluginParams(const juce::AudioProcessor& processor, juce::MemoryBlock& destData)
 {
     auto params = saveParamsTree(processor);
 
-    auto pluginPreset = juce::ValueTree(processor.getName());
+    auto pluginPreset = juce::ValueTree(getFixedPluginName(processor));
     pluginPreset.appendChild(params, nullptr);
 
     processor.copyXmlToBinary(*pluginPreset.createXml(), destData);

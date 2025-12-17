@@ -1,6 +1,6 @@
-project(MidiFXTemplate VERSION 0.0.1)
+project(MidiDelay VERSION 0.0.1)
 
-set (BaseTargetName MidiFXTemplate)
+set (BaseTargetName MidiDelay)
 
 juce_add_plugin("${BaseTargetName}"
         # VERSION ...                               # Set this if the plugin version is different to the project version
@@ -14,12 +14,12 @@ juce_add_plugin("${BaseTargetName}"
         EDITOR_WANTS_KEYBOARD_FOCUS FALSE
         COPY_PLUGIN_AFTER_BUILD TRUE
         PLUGIN_MANUFACTURER_CODE EAtu
-        PLUGIN_CODE MFxt
+        PLUGIN_CODE MDla
         FORMATS AU VST3 Standalone
-        PRODUCT_NAME "Midi Mapper Demo")
+        PRODUCT_NAME "Midi Delay")
 
 target_sources(${BaseTargetName} PRIVATE
-        Source/PluginProcessor.cpp)
+        PluginProcessor.cpp)
 
 target_compile_definitions(${BaseTargetName}
         PUBLIC

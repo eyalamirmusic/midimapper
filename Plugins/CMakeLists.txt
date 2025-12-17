@@ -1,1 +1,2 @@
 add_subdirectory(MidiFXTemplate)
+add_subdirectory(MIDIDelay)
