@@ -22,7 +22,7 @@ struct DelayLine
 {
     void process(juce::MidiBuffer& midiBuffer,
                  int numSamples,
-                 int sampleDelay,
+                 float sampleDelay,
                  EA::MIDI::DelayProcessor& processor)
     {
         duplicator.store(midiBuffer);
@@ -46,12 +46,13 @@ public:
 
 private:
     void processBlock(juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
+    void prepareToPlay(double sampleRate, int) override;
 
     VelocityReducerProcessor velProcessor;
 
     EA::Array<DelayLine, 8> feedbackLines;
 
-    ParamInt* delayParam = new ParamInt({"Delay", 1}, "Delay", 0, 100000, 0);
+    ParamFloat* delayParam = new ParamFloat({"Delay", 1}, "Delay", 0.f, 3.f, 0.001f);
     ParamFloat* velReduction =
         new ParamFloat({"VelReduction", 1}, "Velocity Reduction", 0.f, 1.f, 0.1f);
     ParamInt* feedbackParam = new ParamInt({"Feedback", 1}, "Feedback", 1, 8, 1);

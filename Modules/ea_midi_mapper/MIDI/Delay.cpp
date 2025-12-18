@@ -14,20 +14,23 @@ Delay::Delay()
 }
 
 void Delay::process(MidiBuffer& input,
-                    int sampleDelay,
+                    float delaySeconds,
                     int numSamples,
                     DelayProcessor& processor) noexcept
 {
+    //You have to call prepare() before processing!
+    jassert(timePerSample > 0.0);
+
     for (auto m: input)
     {
         auto message = m.getMessage();
 
         auto delayed = DelayedMessage();
         delayed.message = message;
-        delayed.sampleTime = samplePos + m.samplePosition;
+        delayed.triggerTime = time + (m.samplePosition * timePerSample);
 
         if (processor.shouldDelay(message))
-            delayed.sampleTime += sampleDelay;
+            delayed.triggerTime += (double)delaySeconds;
 
         messages.push_back(delayed);
     }
@@ -38,7 +41,7 @@ void Delay::process(MidiBuffer& input,
     {
         for (auto& message: messages)
         {
-            if (!message.triggered && message.sampleTime <= samplePos)
+            if (!message.triggered && message.triggerTime <= time)
             {
                 processor.processDelayed(message.message);
                 input.addEvent(message.message, sample);
@@ -49,7 +52,7 @@ void Delay::process(MidiBuffer& input,
         auto toRemove = [](const DelayedMessage& m) { return m.triggered; };
         messages.eraseIf(toRemove);
 
-        ++samplePos;
+        time += timePerSample;
     }
 
     duplicates.process(input);

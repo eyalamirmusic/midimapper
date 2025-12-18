@@ -23,6 +23,12 @@ void DelayProcessor::processBlock(juce::AudioBuffer<float>& buffer,
     }
 }
 
+void DelayProcessor::prepareToPlay(double sampleRate, int)
+{
+    for (auto& delay: feedbackLines)
+        delay.delay.prepare(sampleRate);
+}
+
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new DelayProcessor();

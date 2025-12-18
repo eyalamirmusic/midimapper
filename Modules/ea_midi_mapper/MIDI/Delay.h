@@ -6,7 +6,7 @@ namespace EA::MIDI
 {
 struct DelayedMessage
 {
-    int sampleTime = 0;
+    double triggerTime = 0.0;
     MidiMessage message;
     bool triggered = false;
 };
@@ -25,12 +25,15 @@ struct Delay
 {
     Delay();
 
+    void prepare(double sr) { timePerSample = 1.0 / sr; }
+
     void process(MidiBuffer& input,
-                 int sampleDelay,
+                 float delaySecond,
                  int numSamples,
                  DelayProcessor& processor = getDefaultDelayProcessor()) noexcept;
 
-    int samplePos = 0;
+    double time = 0.0;
+    double timePerSample = 0.0;
 
     Vector<DelayedMessage> messages;
     DuplicateNoteHandler duplicates;
