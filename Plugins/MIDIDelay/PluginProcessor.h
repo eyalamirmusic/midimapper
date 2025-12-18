@@ -48,11 +48,26 @@ private:
     void processBlock(juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
     void prepareToPlay(double sampleRate, int) override;
 
+    float getDelayTime() const noexcept;
+    float getMusicalDelayTime() const noexcept;
+
     VelocityReducerProcessor velProcessor;
 
+    static juce::StringArray getTimeChoices() { return {"Time", "Tempo"}; }
+
+    static juce::StringArray getMusicalTimeChoices()
+    {
+        return {"1/2", "1/4", "1/8", "1/16", "1/8t", "1/8d"};
+    }
     EA::Array<DelayLine, 8> feedbackLines;
 
     ParamFloat* delayParam = new ParamFloat({"Delay", 1}, "Delay", 0.f, 3.f, 0.001f);
+
+    ParamChoice* timeChoice = new ParamChoice({"Time", 1}, "Time", getTimeChoices(), 0);
+
+    ParamChoice* musicalTimeDuration =
+        new ParamChoice({"MusicalTime", 1}, "Musical Time", getMusicalTimeChoices(), 0);
+
     ParamFloat* velReduction =
         new ParamFloat({"VelReduction", 1}, "Velocity Reduction", 0.f, 1.f, 0.1f);
     ParamInt* feedbackParam = new ParamInt({"Feedback", 1}, "Feedback", 1, 8, 1);

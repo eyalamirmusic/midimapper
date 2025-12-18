@@ -42,8 +42,15 @@ struct Delay
 struct Duplicator
 {
     void store(const MidiBuffer& input) noexcept { copyBuffers(input, storage); }
-    void mix(MidiBuffer& output) noexcept { mixBuffers(storage, output); }
+    void mix(MidiBuffer& output) const noexcept { mixBuffers(storage, output); }
 
     MidiBuffer storage;
 };
+
+double getDelayTimeFor(double musicalTime, double bpm) noexcept;
+
+double getDelayTimeFor(const juce::AudioProcessor& processor,
+                       double musicalTime,
+                       double fallbackBPM = 120.0) noexcept;
+
 } // namespace EA::MIDI

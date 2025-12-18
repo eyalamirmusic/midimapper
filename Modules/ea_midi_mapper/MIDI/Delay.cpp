@@ -30,7 +30,7 @@ void Delay::process(MidiBuffer& input,
         delayed.triggerTime = time + (m.samplePosition * timePerSample);
 
         if (processor.shouldDelay(message))
-            delayed.triggerTime += (double)delaySeconds;
+            delayed.triggerTime += (double) delaySeconds;
 
         messages.push_back(delayed);
     }
@@ -56,5 +56,33 @@ void Delay::process(MidiBuffer& input,
     }
 
     duplicates.process(input);
+}
+
+double getBPM(const juce::AudioProcessor& processor, double fallbackBPM = 120.0) noexcept
+{
+    if (auto ph = processor.getPlayHead())
+    {
+        if (auto pos = ph->getPosition())
+        {
+            if (auto bpm = pos->getBpm())
+            {
+                return *bpm;
+            }
+        }
+    }
+
+    return fallbackBPM;
+}
+
+double getDelayTimeFor(double musicalTime, double bpm) noexcept
+{
+    return 60.0 / bpm * musicalTime;
+}
+
+double getDelayTimeFor(const juce::AudioProcessor& processor,
+                       double musicalTime,
+                       double fallbackBPM) noexcept
+{
+    return getDelayTimeFor(musicalTime, getBPM(processor, fallbackBPM));
 }
 } // namespace EA::MIDI
