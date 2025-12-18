@@ -4,16 +4,23 @@ DelayProcessor::DelayProcessor()
 {
     addParameter(delayParam);
     addParameter(velReduction);
+    addParameter(feedbackParam);
 }
 
 void DelayProcessor::processBlock(juce::AudioBuffer<float>& buffer,
                                   juce::MidiBuffer& midiMessages)
 
 {
-    duplicator.store(midiMessages);
     velProcessor.reduction = velReduction->get();
-    delay.process(midiMessages, delayParam->get(), buffer.getNumSamples(), velProcessor);
-    duplicator.mix(midiMessages);
+
+    auto numFeedbacks = feedbackParam->get();
+    auto delayTime = delayParam->get();
+
+    for (int index = 0; index < numFeedbacks; ++index)
+    {
+        feedbackLines[index].process(
+            midiMessages, buffer.getNumSamples(), delayTime, velProcessor);
+    }
 }
 
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
