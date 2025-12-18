@@ -29,9 +29,6 @@ void Delay::process(MidiBuffer& input,
         delayed.message = message;
         delayed.triggerTime = time + (m.samplePosition * timePerSample);
 
-        if (processor.shouldDelay(message))
-            delayed.triggerTime += (double) delaySeconds;
-
         messages.push_back(delayed);
     }
 
@@ -41,11 +38,16 @@ void Delay::process(MidiBuffer& input,
     {
         for (auto& message: messages)
         {
-            if (!message.triggered && message.triggerTime <= time)
+            if (!message.triggered)
             {
-                processor.processDelayed(message.message);
-                input.addEvent(message.message, sample);
-                message.triggered = true;
+                auto targetTime = message.triggerTime + delaySeconds;
+
+                if (targetTime <= time)
+                {
+                    processor.processDelayed(message.message);
+                    input.addEvent(message.message, sample);
+                    message.triggered = true;
+                }
             }
         }
 

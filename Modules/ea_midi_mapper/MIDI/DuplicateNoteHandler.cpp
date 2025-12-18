@@ -58,6 +58,10 @@ void DuplicateNoteHandler::handleNoteOff(const MidiMessage& message,
             output.addEvent(message, samplePos);
         }
     }
+    else if (count == 0)
+    {
+        jassertfalse;
+    }
 }
 
 void DuplicateNoteHandler::handleNote(const MidiMessage& message, int samplePos) noexcept
