@@ -20,3 +20,4 @@ BEGIN_JUCE_MODULE_DECLARATION
 #include "MIDI/Mapper.h"
 #include "MIDI/Transposer.h"
 #include "MIDI/Delay.h"
+#include "MIDI/DuplicateNoteHandler.h"

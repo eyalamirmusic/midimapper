@@ -33,4 +33,9 @@ void log(const MidiBuffer& midiMessages) noexcept
                   << std::endl;
     }
 }
+
+MidiMessage toNoteOff(const MidiMessage& m) noexcept
+{
+    return MidiMessage::noteOff(m.getChannel(), m.getNoteNumber(), m.getVelocity());
+}
 } // namespace EA::MIDI

@@ -51,5 +51,7 @@ void Delay::process(MidiBuffer& input,
 
         ++samplePos;
     }
+
+    duplicates.process(input);
 }
 } // namespace EA::MIDI

@@ -1,7 +1,6 @@
 #pragma once
 
-#include "../Common/Common.h"
-#include "Helpers.h"
+#include "DuplicateNoteHandler.h"
 
 namespace EA::MIDI
 {
@@ -34,6 +33,7 @@ struct Delay
     int samplePos = 0;
 
     Vector<DelayedMessage> messages;
+    DuplicateNoteHandler duplicates;
 };
 
 struct Duplicator
