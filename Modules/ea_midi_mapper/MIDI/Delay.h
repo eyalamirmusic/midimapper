@@ -12,39 +12,24 @@ struct DelayedMessage
     bool triggered = false;
 };
 
+struct DelayProcessor
+{
+    virtual ~DelayProcessor() = default;
+
+    virtual bool shouldDelay(const MidiMessage&) { return true; }
+    virtual void processDelayed(MidiMessage&) {}
+};
+
+DelayProcessor& getDefaultDelayProcessor();
+
 struct Delay
 {
-    Delay() { messages.reserve(10000); }
+    Delay();
 
-    void process(MidiBuffer& input, int sampleDelay, int numSamples) noexcept
-    {
-        for (auto m: input)
-        {
-            auto delayed = DelayedMessage();
-            delayed.message = m.getMessage();
-            delayed.sampleTime = samplePos + m.samplePosition + sampleDelay;
-            messages.push_back(delayed);
-        }
-
-        input.clear();
-
-        for (int sample = 0; sample < numSamples; ++sample)
-        {
-            for (auto& message: messages)
-            {
-                if (!message.triggered && message.sampleTime <= samplePos)
-                {
-                    input.addEvent(message.message, sample);
-                    message.triggered = true;
-                }
-            }
-
-            auto toRemove = [](const DelayedMessage& m) { return m.triggered; };
-            messages.eraseIf(toRemove);
-
-            ++samplePos;
-        }
-    }
+    void process(MidiBuffer& input,
+                 int sampleDelay,
+                 int numSamples,
+                 DelayProcessor& processor = getDefaultDelayProcessor()) noexcept;
 
     int samplePos = 0;
 
